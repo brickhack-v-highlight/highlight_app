@@ -1,8 +1,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:id="@+id/root"
+             android:id="@+id/streaming_root"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:layout_alignParentLeft="true"
              android:layout_alignParentTop="true">
+
+    <net.ossrs.yasea.SrsCameraView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/camera_view"/>
 
 </FrameLayout>

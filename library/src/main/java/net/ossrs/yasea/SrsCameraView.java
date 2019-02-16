@@ -86,13 +86,13 @@ public class SrsCameraView extends GLSurfaceView implements GLSurfaceView.Render
         });
 
         // For camera preview on activity creation
-        if (mCamera != null) {
-            try {
-                mCamera.setPreviewTexture(surfaceTexture);
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
+//        if (mCamera != null) {
+//            try {
+//                mCamera.setPreviewTexture(surfaceTexture);
+//            } catch (IOException ioe) {
+//                ioe.printStackTrace();
+//            }
+//        }
     }
 
     @Override

@@ -1,7 +1,27 @@
 package com.bchristians.bchristians.highlight
 
+import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
 
 class MenuFragment: Fragment() {
-    
+
+    var rootView: View? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        this.rootView = inflater.inflate(R.layout.fragment_menu, container, false)
+
+        return this.rootView
+    }
+
+    override fun onResume() {
+        super.onResume()
+        rootView?.findViewById<Button>(R.id.start_button)?.setOnClickListener {
+            it.setOnClickListener(null)
+            (this.context as? MainActivity)?.switchToFragment(StreamingFragment(), "streaming")
+        }
+    }
 }
