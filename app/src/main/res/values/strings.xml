@@ -2,6 +2,6 @@
     <string name="app_name">highlight</string>
 
     <string name="config_stream_url">TODO</string>
-    <string name="config_stream_username">TODO</string>
-    <string name="config_stream_password">TODO</string>
+    <string name="config_stream_username">brickhackv_highlight</string>
+    <string name="config_stream_password">asd123</string>
 </resources>
