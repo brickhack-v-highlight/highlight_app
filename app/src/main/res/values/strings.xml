@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">highlight</string>
+
+    <string name="config_stream_url">TODO</string>
+    <string name="config_stream_username">TODO</string>
+    <string name="config_stream_password">TODO</string>
 </resources>
