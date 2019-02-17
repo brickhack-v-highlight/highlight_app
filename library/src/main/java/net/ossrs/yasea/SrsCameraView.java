@@ -228,8 +228,10 @@ public class SrsCameraView extends GLSurfaceView implements GLSurfaceView.Render
                 while (!Thread.interrupted()) {
                     while (!mGLIntBufferCache.isEmpty()) {
                         IntBuffer picture = mGLIntBufferCache.poll();
-                        mGLPreviewBuffer.asIntBuffer().put(picture.array());
-                        mPrevCb.onGetRgbaFrame(mGLPreviewBuffer.array(), mPreviewWidth, mPreviewHeight);
+                        if( picture != null ) {
+                            mGLPreviewBuffer.asIntBuffer().put(picture.array());
+                            mPrevCb.onGetRgbaFrame(mGLPreviewBuffer.array(), mPreviewWidth, mPreviewHeight);
+                        }
                     }
                     // Waiting for next frame
                     synchronized (writeLock) {

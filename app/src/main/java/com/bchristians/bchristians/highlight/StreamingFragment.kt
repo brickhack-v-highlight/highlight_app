@@ -4,16 +4,20 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.hardware.Camera
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.telephony.TelephonyManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import com.github.faucamp.simplertmp.RtmpHandler
+import kotlinx.android.synthetic.main.activity_main.*
 import net.ossrs.yasea.SrsEncodeHandler
 import net.ossrs.yasea.SrsPublisher
 import net.ossrs.yasea.SrsRecordHandler
@@ -27,6 +31,7 @@ class StreamingFragment:
     SrsEncodeHandler.SrsEncodeListener {
 
     var rootView: View? = null
+    var cameraFront = false
     private lateinit var srsPublisher: SrsPublisher
     private var deviceId: String? = null
 
@@ -41,11 +46,13 @@ class StreamingFragment:
             this.srsPublisher.setRtmpHandler(RtmpHandler(this))
             this.srsPublisher.setRecordHandler(SrsRecordHandler(this))
 
-            this.srsPublisher.setPreviewResolution(640, 360)
-            this.srsPublisher.setOutputResolution(360, 640)
+            this.srsPublisher.setPreviewResolution(1280, 720)
+            this.srsPublisher.setOutputResolution(720, 1280)
 
             this.srsPublisher.setVideoHDMode()
             this.srsPublisher.startCamera()
+
+            this.srsPublisher.switchCameraFace(Camera.CameraInfo.CAMERA_FACING_BACK)
 
             if( ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
                 this.deviceId =
@@ -59,6 +66,16 @@ class StreamingFragment:
             }
         }
 
+        this.rootView?.findViewById<ImageButton>(R.id.swap_camera_button)?.setOnClickListener {
+            if( this.cameraFront ) {
+                this.srsPublisher.switchCameraFace(Camera.CameraInfo.CAMERA_FACING_BACK)
+                this.cameraFront = false
+            } else {
+                this.srsPublisher.switchCameraFace(Camera.CameraInfo.CAMERA_FACING_FRONT)
+                this.cameraFront = true
+            }
+        }
+
         return this.rootView
     }
 
@@ -68,6 +85,13 @@ class StreamingFragment:
         Handler().postDelayed({
             this.srsPublisher.startCamera()
             this.srsPublisher.startPublish(this.getString(R.string.config_stream_url, this.deviceId))
+//            val cameraParams = Camera.open(srsPublisher.camraId).parameters.pictureSize
+//            val cameraHeight = cameraParams.height
+//            val cameraWidth = cameraParams.width
+//            Log.e("screen_dim", "width: $cameraWidth\t\t height: $cameraHeight")
+//
+//            this.srsPublisher.setPreviewResolution(cameraWidth, cameraHeight)
+//            this.srsPublisher.setOutputResolution(cameraHeight, cameraWidth)
         }, 1000) // there's some async stuff here, so just give it a second
     }
 

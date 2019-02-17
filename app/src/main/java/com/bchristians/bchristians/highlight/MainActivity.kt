@@ -16,6 +16,9 @@ class MainActivity :
     var initialBytesReceived: Long = -1
     var initialBytesSent: Long = -1
 
+    var lastBytesReceived: Long = -1
+    var lastBytesSent: Long = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,7 +30,6 @@ class MainActivity :
         this.initialBytesSent = TrafficStats.getTotalTxBytes()
 
         Log.d("this_net >>> initial bytes rcvd", this.initialBytesReceived.toString())
-
         Log.d("this_net >>> initial bytes sent", this.initialBytesSent.toString())
 
         val handlerThread = HandlerThread("backgroundThread")
@@ -53,8 +55,15 @@ class MainActivity :
     private fun logBytesUsed() {
 
         val curBytesReceived = TrafficStats.getTotalRxBytes() - this.initialBytesReceived
-        val curBytesSent = TrafficStats.getTotalTxBytes() - this.initialBytesSent
+        val curBytesSent     = TrafficStats.getTotalTxBytes() - this.initialBytesSent
 
-        Log.d("this_net >>> traffic status", "s:($curBytesSent) \t\tr:($curBytesReceived)")
+        val uploadRate   = (8.0 / 1024.0 * (curBytesSent-lastBytesSent)).toInt()
+        val downloadRate = (8.0 / 1024.0 * (curBytesReceived-lastBytesReceived)).toInt()
+
+        this.lastBytesSent     = curBytesSent
+        this.lastBytesReceived = curBytesReceived
+
+
+        Log.d("this_net >>> traffic status", "s:($curBytesSent @ $uploadRate kbps) \t\tr:($curBytesReceived @ $downloadRate kbps)")
     }
 }
