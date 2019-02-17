@@ -3,6 +3,7 @@ package com.bchristians.bchristians.highlight
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Context.WINDOW_SERVICE
 import android.content.pm.PackageManager
 import android.hardware.Camera
 import android.os.Bundle
@@ -12,9 +13,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.telephony.TelephonyManager
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageButton
 import com.github.faucamp.simplertmp.RtmpHandler
 import kotlinx.android.synthetic.main.activity_main.*
@@ -48,6 +47,7 @@ class StreamingFragment:
 
             this.srsPublisher.setPreviewResolution(1280, 720)
             this.srsPublisher.setOutputResolution(720, 1280)
+            this.srsPublisher.setScreenOrientation(180)
 
             this.srsPublisher.setVideoHDMode()
             this.srsPublisher.startCamera()
@@ -83,15 +83,14 @@ class StreamingFragment:
         super.onStart()
 
         Handler().postDelayed({
-            this.srsPublisher.startCamera()
-            this.srsPublisher.startPublish(this.getString(R.string.config_stream_url, this.deviceId))
 //            val cameraParams = Camera.open(srsPublisher.camraId).parameters.pictureSize
 //            val cameraHeight = cameraParams.height
 //            val cameraWidth = cameraParams.width
-//            Log.e("screen_dim", "width: $cameraWidth\t\t height: $cameraHeight")
+//            Log.e("screen_dim", "width: ${1280 * cameraWidth / cameraHeight}\t\t height: $cameraHeight")
 //
 //            this.srsPublisher.setPreviewResolution(cameraWidth, cameraHeight)
-//            this.srsPublisher.setOutputResolution(cameraHeight, cameraWidth)
+            this.srsPublisher.startCamera()
+            this.srsPublisher.startPublish(this.getString(R.string.config_stream_url, this.deviceId))
         }, 1000) // there's some async stuff here, so just give it a second
     }
 
