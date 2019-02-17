@@ -36,4 +36,7 @@ dependencies {
     // Scheduler
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
 
+    /* OkHttp3 for network requests */
+    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+
 }

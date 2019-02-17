@@ -3,6 +3,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
+
     <net.ossrs.yasea.SrsCameraView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -25,5 +26,28 @@
 
     </LinearLayout>
 
+    <FrameLayout
+            android:id="@+id/recording_outline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/recording_outline"/>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You are being streamed!"
+                android:textSize="20sp"
+                android:textColor="@color/red"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="96dp"
+                android:textAlignment="center"
+                android:drawableStart="@drawable/rec_circle"/>
+
+    </FrameLayout>
 
 </FrameLayout>

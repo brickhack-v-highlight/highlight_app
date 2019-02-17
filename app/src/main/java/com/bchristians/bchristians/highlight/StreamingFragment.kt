@@ -2,12 +2,13 @@ package com.bchristians.bchristians.highlight
 
 import android.Manifest
 import android.app.Activity
+import android.app.DownloadManager
 import android.content.Context
-import android.content.Context.WINDOW_SERVICE
 import android.content.pm.PackageManager
 import android.hardware.Camera
 import android.os.Bundle
 import android.os.Handler
+import android.os.HandlerThread
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -16,12 +17,13 @@ import android.util.Log
 import android.view.*
 import android.widget.ImageButton
 import com.github.faucamp.simplertmp.RtmpHandler
-import kotlinx.android.synthetic.main.activity_main.*
+import io.reactivex.android.schedulers.AndroidSchedulers
 import net.ossrs.yasea.SrsEncodeHandler
 import net.ossrs.yasea.SrsPublisher
 import net.ossrs.yasea.SrsRecordHandler
 import java.io.IOException
 import java.net.SocketException
+import java.util.concurrent.TimeUnit
 
 class StreamingFragment:
     Fragment(),
@@ -31,6 +33,7 @@ class StreamingFragment:
 
     var rootView: View? = null
     var cameraFront = false
+    var httpClient: OKHttpClient? = null
     private lateinit var srsPublisher: SrsPublisher
     private var deviceId: String? = null
 
@@ -76,6 +79,8 @@ class StreamingFragment:
             }
         }
 
+        this.startCheckingForRecording()
+
         return this.rootView
     }
 
@@ -83,29 +88,44 @@ class StreamingFragment:
         super.onStart()
 
         Handler().postDelayed({
-//            val cameraParams = Camera.open(srsPublisher.camraId).parameters.pictureSize
-//            val cameraHeight = cameraParams.height
-//            val cameraWidth = cameraParams.width
-//            Log.e("screen_dim", "width: ${1280 * cameraWidth / cameraHeight}\t\t height: $cameraHeight")
-//
-//            this.srsPublisher.setPreviewResolution(cameraWidth, cameraHeight)
             this.srsPublisher.startCamera()
             this.srsPublisher.startPublish(this.getString(R.string.config_stream_url, this.deviceId))
+//            this.srsPublisher.startPublish("rtmp://a.rtmp.youtube.com/live2/x7cv-4duj-rkag-7ubp")
         }, 1000) // there's some async stuff here, so just give it a second
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-//        this.srsPublisher.stopPublish()
-//        this.srsPublisher.stopCamera()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        this.srsPublisher.stopPublish()
-        this.srsPublisher.stopCamera()
+//        this.srsPublisher.stopPublish()
+//        this.srsPublisher.stopCamera()
+    }
+
+    fun startCheckingForRecording() {
+        val url = "https://highlight-microservice.herokuapp.com/is_active/${this.deviceId}"
+
+        this.httpClient = OKHttpClient(url) { response ->
+            (this.context as? Activity)?.runOnUiThread {
+                this.rootView?.findViewById<View>(R.id.recording_outline)?.visibility =
+                        if (response.body()?.contentLength() == 4L) {
+                            View.VISIBLE
+                        } else {
+                            View.GONE
+                        }
+            }
+        }
+
+        val handlerThread = HandlerThread("recordingChecker")
+        if (!handlerThread.isAlive)
+            handlerThread.start()
+        AndroidSchedulers.from(handlerThread.looper).schedulePeriodicallyDirect(
+            {
+                this.httpClient?.run()
+            },
+            1000L,
+            1000L,
+            TimeUnit.MILLISECONDS
+        )
     }
 
     override fun onEncodeIllegalArgumentException(e: IllegalArgumentException?) {
