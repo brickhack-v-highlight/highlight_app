@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.HandlerThread
 import android.support.v4.app.Fragment
 import android.util.Log
+import android.view.WindowManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.util.concurrent.TimeUnit
 
@@ -18,7 +19,7 @@ class MainActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         switchToFragment(MenuFragment(), "menu")
 
         // Start Logging

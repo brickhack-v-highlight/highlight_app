@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">highlight</string>
 
-    <string name="config_stream_url">TODO</string>
+    <string name="config_stream_url">rtmp://34.73.89.213:1935/live/%s</string>
+
     <string name="config_stream_username">brickhackv_highlight</string>
     <string name="config_stream_password">asd123</string>
 </resources>
